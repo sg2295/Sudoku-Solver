@@ -8,9 +8,9 @@ class SudokuState:
         self.possible_values = self.__generate_possible_values()
 
     def __generate_possible_values(self):
-        possible_values = [[[] for _ in range(9)] for _ in range(9)]
-
+        possible_values = np.empty(shape=(9, 9), dtype=object)
         for (row, col), curr_value in np.ndenumerate(self.final_values):
+            possible_values[row][col] = []
             if curr_value == 0:
                 for value in range(1, 10):
                     if self.__is_valid_value(row, col, value):
@@ -40,6 +40,14 @@ class SudokuState:
                         return False
 
         return True
+
+    def get_possible_values(self, row, col):
+        return self.possible_values[row][col].copy()
+
+    def get_final_values(self):
+        if self.is_goal():
+            return self.final_values.copy()
+        return np.full(shape=(9, 9), fill_value=-1, dtype=int)
 
     def is_goal(self):
         if 0 in self.final_values:
