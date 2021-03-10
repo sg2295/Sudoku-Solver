@@ -55,6 +55,8 @@ def sudoku_solver(sudoku):
             It contains the solution, if there is one. If there is no solution, all array entries should be -1.
     """
     solved = SudokuState.SudokuState(sudoku)
-
+    print(solved.is_solvable())
+    print(solved.is_invalid())
+    print(solved.is_goal())
     # return depth_first_search(solved).get_final_state()
     return "Meow"
