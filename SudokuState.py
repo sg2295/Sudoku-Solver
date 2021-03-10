@@ -6,7 +6,6 @@ class SudokuState:
     def __init__(self, final_values):
         self.final_values = final_values.copy()
         self.possible_values = self.__generate_possible_values()
-        print(self.possible_values)
 
     def __generate_possible_values(self):
         possible_values = [[[] for _ in range(9)] for _ in range(9)]
@@ -14,12 +13,12 @@ class SudokuState:
         for (row, col), curr_value in np.ndenumerate(self.final_values):
             if curr_value == 0:
                 for value in range(1, 10):
-                    if self.__is_valid(row, col, value):
+                    if self.__is_valid_value(row, col, value):
                         possible_values[row][col].append(value)
 
         return possible_values
 
-    def __is_valid(self, target_row, target_col, value):
+    def __is_valid_value(self, target_row, target_col, value):
         if value == 0:
             return True  # If given a 0, return True (it is a placeholder)
 
@@ -49,9 +48,9 @@ class SudokuState:
 
     def is_invalid(self):
         for (row, col), value in np.ndenumerate(self.final_values):
-            if not self.__is_valid(row, col, value):
-                return False
-        return True
+            if not self.__is_valid_value(row, col, value):
+                return True
+        return False
 
     def is_solvable(self):
         for (row, col), value in np.ndenumerate(self.final_values):
@@ -60,4 +59,5 @@ class SudokuState:
         return True
 
     def gen_next_state(self, row, col, value):
+
         pass
