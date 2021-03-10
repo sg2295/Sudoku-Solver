@@ -3,6 +3,11 @@ import numpy as np
 
 
 def pick_next(sudoku):
+    """
+    Find the most constrained position!! TODO do this
+    :param sudoku:
+    :return:
+    """
     # Choose a value to change (return row, col)
     # Pick the slot with the MOST constraints/least possible values
     # least constrain, but watch out this doesn't end up adding more complexity than it saves

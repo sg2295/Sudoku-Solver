@@ -61,8 +61,8 @@ class SudokuState:
         return False
 
     def is_solvable(self):
-        for (row, col), value in np.ndenumerate(self.final_values):
-            if value == 0 and len(self.possible_values[row][col]) == 0:  # Check that each
+        for (row, col), value in np.ndenumerate(self.final_values):  # Check that each empty slot has a possible value:
+            if value == 0 and len(self.possible_values[row][col]) == 0:
                 return False
         return True
 

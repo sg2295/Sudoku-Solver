@@ -39,7 +39,7 @@ def run_tests(difficulties=None):
                 break # TODO REMOVE
 
             print("This sudoku took", end_time - start_time, "seconds to solve.\n")
-            return # TODO REMOVE
+            # return # TODO REMOVE
         print(f"{count}/{len(sudokus)} {difficulty} sudokus correct")
         if count < len(sudokus):
             break
@@ -47,5 +47,5 @@ def run_tests(difficulties=None):
 
 if __name__ == "__main__":
     d = ["hard"]
-    run_tests(d)
-    # run_tests()
+    # run_tests(d)
+    run_tests()
