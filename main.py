@@ -24,7 +24,7 @@ def depth_first_search(sudoku):
 
     # Does a DFS on the sudoku, trying each possible value for every position until it finds a solution
     position = pick_next(sudoku)
-    if position == None:
+    if position is None:
         return sudoku
     row, col = position
     values = order_values(sudoku, row, col)
@@ -55,4 +55,6 @@ def sudoku_solver(sudoku):
             It contains the solution, if there is one. If there is no solution, all array entries should be -1.
     """
     solved = SudokuState.SudokuState(sudoku)
-    return depth_first_search(solved).get_final_state()
+
+    # return depth_first_search(solved).get_final_state()
+    return "Meow"
