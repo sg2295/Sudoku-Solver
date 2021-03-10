@@ -58,8 +58,17 @@ class SudokuState:
                 return False
         return True
 
+    def get_singleton(self):
+        for (row, col), value in np.ndenumerate(self.possible_values):
+            if len(value) == 1:
+                return (row, col), value[0]
+        return None
+
     def gen_next_state(self, row, col, value):
         new_state = copy.deepcopy(self)
         new_state.final_values[row][col] = value
         new_state.possible_values = new_state.__generate_possible_values()
+        singleton = new_state.get_singleton()
+        if singleton:
+            new_state = new_state.gen_next_state(singleton[0][0], singleton[0][1], singleton[1])
         return new_state
