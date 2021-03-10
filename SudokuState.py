@@ -41,3 +41,23 @@ class SudokuState:
                         return False
 
         return True
+
+    def is_goal(self):
+        if 0 in self.final_values:
+            return False
+        return True
+
+    def is_invalid(self):
+        for (row, col), value in np.ndenumerate(self.final_values):
+            if not self.__is_valid(row, col, value):
+                return False
+        return True
+
+    def is_solvable(self):
+        for (row, col), value in np.ndenumerate(self.final_values):
+            if value == 0 and len(self.possible_values[row][col]) == 0:  # Check that each
+                return False
+        return True
+
+    def gen_next_state(self, row, col, value):
+        pass
