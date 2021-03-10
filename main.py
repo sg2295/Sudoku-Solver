@@ -18,27 +18,18 @@ def order_values(sudoku, row, col):
 
 
 def depth_first_search(sudoku):
-    # Check valid
-    if sudoku.is_invalid():
+    if sudoku.is_invalid() or sudoku.is_goal() or not sudoku.is_solvable():
         return sudoku
 
-    # Does a DFS on the sudoku, trying each possible value for every position until it finds a solution
-    position = pick_next(sudoku)
-    if position is None:
-        return sudoku
-    row, col = position
+    row, col = pick_next(sudoku)
     values = order_values(sudoku, row, col)
 
     for value in values:
-        new_state = sudoku.set_value(row, col, value)
-        if new_state is None:
+        new_sudoku = depth_first_search(sudoku.gen_next_state(row, col, value))
+        if new_sudoku.is_goal():
+            sudoku = new_sudoku
             break
-        if new_state.is_goal():
-            return new_state
-        if not new_state.is_invalid():
-            deep_state = depth_first_search(new_state)
-            if deep_state is not None and deep_state.is_goal():
-                return deep_state
+
     return sudoku
 
 
@@ -55,13 +46,28 @@ def sudoku_solver(sudoku):
             It contains the solution, if there is one. If there is no solution, all array entries should be -1.
     """
     solved = SudokuState.SudokuState(sudoku)
-    print(solved.is_solvable())
-    print(solved.is_invalid())
-    print(solved.is_goal())
+    return depth_first_search(solved).get_final_values()
 
-    solved = solved.gen_next_state(0, 1, 7)
-    print(solved.final_values)
-    print(solved.possible_values)
-
-    # return depth_first_search(solved).get_final_state()
-    return "Meow"
+# def depth_first_search(sudoku):
+#     # Check valid
+#     if sudoku.is_invalid():
+#         return sudoku
+#
+#     # Does a DFS on the sudoku, trying each possible value for every position until it finds a solution
+#     position = pick_next(sudoku)
+#     if position is None:
+#         return sudoku
+#     row, col = position
+#     values = order_values(sudoku, row, col)
+#
+#     for value in values:
+#         new_state = sudoku.set_value(row, col, value)
+#         if new_state is None:
+#             break
+#         if new_state.is_goal():
+#             return new_state
+#         if not new_state.is_invalid():
+#             deep_state = depth_first_search(new_state)
+#             if deep_state is not None and deep_state.is_goal():
+#                 return deep_state
+#     return sudoku
