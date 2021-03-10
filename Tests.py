@@ -6,9 +6,9 @@ import numpy as np
 # Provided testing code, from University of Bath
 
 
-def run_tests(difficulties=None, limit=None):
-
-    difficulties = ['very_easy', 'easy', 'medium', 'hard']
+def run_tests(difficulties=None):
+    if difficulties is None:
+        difficulties = ['very_easy', 'easy', 'medium', 'hard']
 
     for difficulty in difficulties:
         print(f"Testing {difficulty} sudokus")
@@ -37,7 +37,7 @@ def run_tests(difficulties=None, limit=None):
                 print("No, the correct solution is: --------------------------------------------------------------")
                 print(solutions[i])
 
-            print("This sudoku took", end_time-start_time, "seconds to solve.\n")
+            print("This sudoku took", end_time - start_time, "seconds to solve.\n")
 
         print(f"{count}/{len(sudokus)} {difficulty} sudokus correct")
         if count < len(sudokus):
@@ -45,4 +45,5 @@ def run_tests(difficulties=None, limit=None):
 
 
 if __name__ == "__main__":
-    run_tests()
+    d = ["hard"]
+    run_tests(d)
