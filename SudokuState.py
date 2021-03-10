@@ -59,5 +59,7 @@ class SudokuState:
         return True
 
     def gen_next_state(self, row, col, value):
-
-        pass
+        new_state = copy.deepcopy(self)
+        new_state.final_values[row][col] = value
+        new_state.possible_values = new_state.__generate_possible_values()
+        return new_state

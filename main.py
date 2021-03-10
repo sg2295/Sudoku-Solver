@@ -58,5 +58,10 @@ def sudoku_solver(sudoku):
     print(solved.is_solvable())
     print(solved.is_invalid())
     print(solved.is_goal())
+
+    solved = solved.gen_next_state(0, 1, 7)
+    print(solved.final_values)
+    print(solved.possible_values)
+
     # return depth_first_search(solved).get_final_state()
     return "Meow"
