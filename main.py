@@ -23,11 +23,14 @@ def order_values(sudoku, row, col):
 
 
 def depth_first_search(sudoku):
-    if sudoku.is_invalid() or sudoku.is_goal() or not sudoku.is_solvable():
+    if sudoku.is_invalid() or not sudoku.is_solvable():
         return sudoku
 
     row, col = pick_next(sudoku)
-    values = order_values(sudoku, row, col)
+    # if row == -1 or col == -1:
+    #     return sudoku
+
+    values = sudoku.possible_values[row][col]
 
     for value in values:
         new_sudoku = depth_first_search(sudoku.gen_next_state(row, col, value))
@@ -52,27 +55,3 @@ def sudoku_solver(sudoku):
     """
     solved = SudokuState.SudokuState(sudoku)
     return depth_first_search(solved).get_final_values()
-
-# def depth_first_search(sudoku):
-#     # Check valid
-#     if sudoku.is_invalid():
-#         return sudoku
-#
-#     # Does a DFS on the sudoku, trying each possible value for every position until it finds a solution
-#     position = pick_next(sudoku)
-#     if position is None:
-#         return sudoku
-#     row, col = position
-#     values = order_values(sudoku, row, col)
-#
-#     for value in values:
-#         new_state = sudoku.set_value(row, col, value)
-#         if new_state is None:
-#             break
-#         if new_state.is_goal():
-#             return new_state
-#         if not new_state.is_invalid():
-#             deep_state = depth_first_search(new_state)
-#             if deep_state is not None and deep_state.is_goal():
-#                 return deep_state
-#     return sudoku
