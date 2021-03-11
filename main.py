@@ -11,15 +11,15 @@ def pick_next(sudoku):
     # Choose a value to change (return row, col)
     # Pick the slot with the MOST constraints/least possible values
     # least constrain, but watch out this doesn't end up adding more complexity than it saves
-
+    min_row, min_col, min_len = -1, -1, 10
     for (row, col), value in np.ndenumerate(sudoku.possible_values):
-        if len(value) > 0:
-            return row, col
+        if 0 < len(value) < min_len:
+            min_row, min_col = row, col
+            min_len = len(value)
+            if min_len == 1:
+                break
 
-
-def order_values(sudoku, row, col):
-    # Get the possible values for a slot sorted in the order to try them in, could be left as random.
-    return sudoku.get_possible_values(row, col)
+    return min_row, min_col
 
 
 def depth_first_search(sudoku):
