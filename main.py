@@ -4,17 +4,17 @@ import numpy as np
 
 def pick_next(sudoku):
     """
-    Find the most constrained position!! TODO do this
+    Find the most constrained position!!
     :param sudoku:
     :return:
     """
     # Choose a value to change (return row, col)
     # Pick the slot with the MOST constraints/least possible values
     # least constrain, but watch out this doesn't end up adding more complexity than it saves
-    for row in range(9):
-        for col in range(9):
-            if len(sudoku.get_possible_values(row, col)) > 0:
-                return row, col
+
+    for (row, col), value in np.ndenumerate(sudoku.possible_values):
+        if len(value) > 0:
+            return row, col
 
 
 def order_values(sudoku, row, col):
