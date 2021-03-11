@@ -41,9 +41,6 @@ class SudokuState:
 
         return True
 
-    def get_possible_values(self, row, col):
-        return self.possible_values[row][col].copy()
-
     def get_final_values(self):
         if self.is_goal():
             return self.final_values.copy()
