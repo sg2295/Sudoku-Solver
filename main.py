@@ -54,4 +54,6 @@ def sudoku_solver(sudoku):
             It contains the solution, if there is one. If there is no solution, all array entries should be -1.
     """
     solved = SudokuState.SudokuState(sudoku)
-    return depth_first_search(solved).get_final_values()
+    if solved.is_solvable():
+        solved = depth_first_search(solved)
+    return solved.get_final_values()

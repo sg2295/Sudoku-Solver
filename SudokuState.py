@@ -69,6 +69,10 @@ class SudokuState:
                 return (row, col), value[0]
         return None
 
+    # def __deepcopy__(self, memodict={}):
+    #
+    #     pass
+
     def gen_next_state(self, row, col, value):
         new_state = copy.deepcopy(self)
         new_state.final_values[row][col] = value
@@ -76,4 +80,5 @@ class SudokuState:
         singleton = new_state.get_singleton()
         if singleton:
             new_state = new_state.gen_next_state(singleton[0][0], singleton[0][1], singleton[1])
+            # singleton = new_state.get_singleton()
         return new_state
