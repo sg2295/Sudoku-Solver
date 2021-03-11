@@ -23,20 +23,19 @@ def pick_next(sudoku):
 
 
 def depth_first_search(sudoku):
-    if sudoku.is_invalid() or not sudoku.is_solvable():
-        return sudoku
-
     row, col = pick_next(sudoku)
-    # if row == -1 or col == -1:
-    #     return sudoku
-
     values = sudoku.possible_values[row][col]
 
     for value in values:
-        new_sudoku = depth_first_search(sudoku.gen_next_state(row, col, value))
+        new_sudoku = sudoku.gen_next_state(row, col, value)
         if new_sudoku.is_goal():
             sudoku = new_sudoku
             break
+        if new_sudoku.is_solvable():
+            deep_sudoku = depth_first_search(new_sudoku)
+            if deep_sudoku.is_goal():
+                sudoku = deep_sudoku
+                break
 
     return sudoku
 
@@ -54,6 +53,26 @@ def sudoku_solver(sudoku):
             It contains the solution, if there is one. If there is no solution, all array entries should be -1.
     """
     solved = SudokuState.SudokuState(sudoku)
-    if solved.is_solvable():
+    solved.generate_possible_values()
+    if not solved.is_invalid():
         solved = depth_first_search(solved)
     return solved.get_final_values()
+
+
+# def depth_first_search(sudoku):
+#     if sudoku.is_invalid() or not sudoku.is_solvable():
+#         return sudoku
+#
+#     row, col = pick_next(sudoku)
+#     # if row == -1 or col == -1:
+#     #     return sudoku
+#
+#     values = sudoku.possible_values[row][col]
+#
+#     for value in values:
+#         new_sudoku = depth_first_search(sudoku.gen_next_state(row, col, value))
+#         if new_sudoku.is_goal():
+#             sudoku = new_sudoku
+#             break
+#
+#     return sudoku
