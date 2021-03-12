@@ -2,43 +2,36 @@ import SudokuState
 import numpy as np
 
 
-def pick_next(sudoku):
+def pick_next_cell(sudoku):
     """
-    Find the most constrained position!!
+    Find the most constrained value, i.e. the vacant position with the least possible values.
     :param sudoku:
     :return:
     """
-    # Choose a value to change (return row, col)
-    # Pick the slot with the MOST constraints/least possible values
-    # least constrain, but watch out this doesn't end up adding more complexity than it saves
-    min_row, min_col, min_len = -1, -1, 10
-    for (row, col), value in np.ndenumerate(sudoku.possible_values):
-        if 0 < len(value) < min_len:
+    min_row, min_col, curr_min = -1, -1, 9  # Assume minimum
+    for (row, col), values in np.ndenumerate(sudoku.possible_values):
+        if 0 < len(values) < curr_min:
             min_row, min_col = row, col
-            min_len = len(value)
-            if min_len == 1:
+            curr_min = len(values)
+            if curr_min == 1:  # If it is a singleton, return it immediately
                 break
-
     return min_row, min_col
 
 
-def depth_first_search(sudoku):
-    if sudoku.is_invalid() or not sudoku.is_solvable():
-        return sudoku
-
-    row, col = pick_next(sudoku)
-    # if row == -1 or col == -1:
-    #     return sudoku
-
-    values = sudoku.possible_values[row][col]
+def depth_first_search(state):
+    row, col = pick_next_cell(state)
+    values = state.possible_values[row][col]
 
     for value in values:
-        new_sudoku = depth_first_search(sudoku.gen_next_state(row, col, value))
-        if new_sudoku.is_goal():
-            sudoku = new_sudoku
-            break
+        new_state = state.gen_next_state(row, col, value)
+        if new_state.is_goal():
+            return new_state
+        if not new_state.is_invalid():
+            deep_state = depth_first_search(new_state)
+            if deep_state is not None and deep_state.is_goal():
+                return deep_state
 
-    return sudoku
+    return None
 
 
 def sudoku_solver(sudoku):
@@ -54,4 +47,9 @@ def sudoku_solver(sudoku):
             It contains the solution, if there is one. If there is no solution, all array entries should be -1.
     """
     solved = SudokuState.SudokuState(sudoku)
-    return depth_first_search(solved).get_final_values()
+    if solved.is_valid_board():
+        solved.init_constraints()
+        solved = depth_first_search(solved)
+    if solved is None:
+        return np.full(shape=(9, 9), fill_value=-1, dtype=int)
+    return solved.get_final_values()
