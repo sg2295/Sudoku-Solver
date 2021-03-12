@@ -47,9 +47,10 @@ def sudoku_solver(sudoku):
             It contains the solution, if there is one. If there is no solution, all array entries should be -1.
     """
     solved = SudokuState.SudokuState(sudoku)
-    if solved.is_valid_board():
-        solved.init_constraints()
-        solved = depth_first_search(solved)
+    if not solved.is_valid_board():
+        return np.full(shape=(9, 9), fill_value=-1, dtype=int)
+    solved.init_constraints()
+    solved = depth_first_search(solved)
     if solved is None:
         return np.full(shape=(9, 9), fill_value=-1, dtype=int)
-    return solved.get_final_values()
+    return solved.final_values

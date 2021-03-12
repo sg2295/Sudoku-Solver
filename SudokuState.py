@@ -48,14 +48,6 @@ class SudokuState:
 
         return True  # Value does not appear in the same row, col or block
 
-    def get_final_values(self):
-        """
-        :return: The final values if it is a goal state, otherwise a 9x9 numpy array of -1s.
-        """
-        if self.is_goal():
-            return self.final_values
-        return np.full(shape=(9, 9), fill_value=-1, dtype=int)
-
     def is_invalid(self):
         """
         :return: True if an empty position has no possible values.
@@ -96,14 +88,11 @@ class SudokuState:
                     singletons.append([row, col])
         return singletons
 
-    def update_constraints(self, target_row, target_col):
+    def update_constraints(self, target_row, target_col, value):
         """
         Update the possible values, following an assignment to the given position (row, col).
         Find and update the affected positions, applying the constraints.
         """
-        # Update the board configuration:
-        value = self.final_values[target_row][target_col]
-        self.possible_values[target_row][target_col] = [value]
         for i in range(9):
             if value in self.possible_values[target_row][i]:  # checks the horizontal
                 self.possible_values[target_row][i].remove(value)
@@ -125,13 +114,15 @@ class SudokuState:
         :return:
         """
         state = copy.deepcopy(self)  # Create a copy of the current state (board)
-        state.final_values[row][col] = value  # Update the final values (to update constraints)
-        state.update_constraints(row, col)  # Update affected possible values (apply constraints)
+        # Update the board configuration:
+        state.final_values[row][col] = value
+        state.possible_values[row][col] = []
+        state.update_constraints(row, col, value)  # Update affected possible values (apply constraints)
 
-        singletons = state.get_singletons()  # Find singletons for this board configuration
-        while len(singletons) > 0:
-            row, col = singletons[0]
+        singleton_list = state.get_singletons()  # Find singletons for this board configuration
+        while singleton_list:
+            row, col = singleton_list[0]
             state = state.gen_next_state(row, col, state.possible_values[row][col][0])  # Generate new state
-            singletons = state.get_singletons()  # Get the remaining singletons
+            singleton_list = state.get_singletons()  # Get the remaining singletons
 
         return state
