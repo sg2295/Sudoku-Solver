@@ -7,8 +7,12 @@ class SudokuState:
         self.final_values = final_values  # Holds the final values on the board
         self.possible_values = np.empty(shape=(9, 9), dtype=list)  # Holds the possible values each empty slot can take
 
-    def generate_possible_values(self):
-        # Initialize the possible values with valid combinations
+    def init_constraints(self):
+        """
+        Go through all empty positions and initialize their possible values, according to constraints.
+        Called once when the board is first created.
+        :return: None
+        """
         for (row, col), curr_value in np.ndenumerate(self.final_values):
             self.possible_values[row][col] = []
             if curr_value == 0:
