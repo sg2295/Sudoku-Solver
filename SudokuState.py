@@ -4,32 +4,40 @@ import numpy as np
 
 class SudokuState:
     def __init__(self, final_values):
+        """
+        Creates a SudokuState Object following the given board specifications.
+        :param final_values: The board configuration. Two dimensional (2d) numpy array with values in range (0, 9).
+        """
         self.final_values = final_values  # Holds the final values on the board
         self.possible_values = np.empty(shape=(9, 9), dtype=list)  # Holds the possible values each empty slot can take
 
     def init_constraints(self):
         """
-        Go through all empty positions and initialize their possible values, according to constraints.
+        Go through all empty positions and initialize their possible values, according to the constraints.
         Called once when the board is first created.
         :return: None
         """
         for (row, col), curr_value in np.ndenumerate(self.final_values):
-            self.possible_values[row][col] = []
-            if curr_value == 0:
-                for value in range(1, 10):
+            self.possible_values[row][col] = []  # Initialize empty list
+            if curr_value == 0:  # If the final value is 0 then the position is vacant
+                for value in range(1, 10):  # Iterate through all possible values (1, 9) and check if they are possible
                     if self.__is_valid_value(row, col, value):
-                        self.possible_values[row][col].append(value)
+                        self.possible_values[row][col].append(value)  # Append possible values to the corresponding list
         return
 
     def __is_valid_value(self, target_row, target_col, value):
         """
-        Check if the given value is allowed to be placed in position (target_row, target_col)
-        Checks that no duplicate values are in the same row, col and block
-        :return: True if it is a possible value, False otherwise
+        Check if the given value is allowed to be placed in the specified position (target_row, target_col).
+        Checks that no duplicate values are in the same row, column or 3x3 block.
+        :param target_row: The row position where the value will be placed.
+        :param target_col: The column position where the value will be placed.
+        :param value: The value that is being evaluated.
+        :return: True if it is a possible (valid) value, False otherwise.
         """
         if value == 0:
-            return True  # 0's are always a valid value since they are a placeholder
+            return True  # 0's are always a valid value since they are a placeholder (signify empty position)
 
+        # Check row and column:
         for i in range(9):
             if self.final_values[i][target_col] == value and i != target_row:  # Check column
                 return False  # Value appears on the same column twice
@@ -48,14 +56,27 @@ class SudokuState:
 
         return True  # Value does not appear in the same row, col or block
 
-    def is_invalid(self):
+    def is_valid_board(self):
         """
-        :return: True if an empty position has no possible values.
+        Checks whether the given board is a valid sudoku board. (No duplicates on row, col or block).
+        Iterate through every position in the board and check if it is a valid (possible) value, i.e. no duplicates in
+        the same row, column or 3x3 block.
+        :return: True if it is valid board, False otherwise.
+        """
+        for (row, col), value in np.ndenumerate(self.final_values):  # Iterate through each position
+            if not self.__is_valid_value(row, col, value):  # Check that the value is valid
+                return False  # An invalid (duplicate) value was found
+        return True
+
+    def is_solvable(self):
+        """
+        Checks if the board is solvable, i.e. each empty position has at least one possible value.
+        :return: True if the board is solvable
         """
         for (row, col), value in np.ndenumerate(self.final_values):
             if value == 0 and len(self.possible_values[row][col]) < 1:
-                return True
-        return False
+                return False
+        return True
 
     def is_goal(self):
         """
@@ -63,16 +84,6 @@ class SudokuState:
         """
         if 0 in self.final_values:
             return False
-        return True
-
-    def is_valid_board(self):
-        """
-        Checks whether the given board is a valid sudoku board. (No duplicates on row, col or block).
-        :return: True if it is valid, False otherwise.
-        """
-        for (row, col), value in np.ndenumerate(self.final_values):
-            if not self.__is_valid_value(row, col, value):
-                return False
         return True
 
     def get_singletons(self):
@@ -117,6 +128,7 @@ class SudokuState:
         # Update the board configuration:
         state.final_values[row][col] = value
         state.possible_values[row][col] = []
+
         state.update_constraints(row, col, value)  # Update affected possible values (apply constraints)
 
         singleton_list = state.get_singletons()  # Find singletons for this board configuration
