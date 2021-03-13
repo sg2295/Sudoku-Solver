@@ -2,9 +2,10 @@ import SudokuState
 import numpy as np
 
 
-def gen_mrv_cells(sudoku_state):
+def get_minimum_value_pos(sudoku_state):
     """
     Finds the most constrained value, then finds all positions that have the same constrain value
+    # todo comments + docstring + dictionary O(n) + O(1) instead of O(2n)
     """
     min_row, min_col, curr_min = -1, -1, 9  # Assume most constrained position has 9 possible moves (max num of moves)
     for (row, col), values in np.ndenumerate(sudoku_state.possible_values):
@@ -20,24 +21,9 @@ def gen_mrv_cells(sudoku_state):
     return mrv_positions
 
 
-def get_max_constrain(sudoku_state):
+def get_constrain_number(sudoku_state, row, col):
     """
-    Find the position which is affected by the most number of other empty cells
-    """
-    mrv_positions = gen_mrv_cells(sudoku_state)
-    max_row, max_col = -1, -1
-    max = 0
-    for position in mrv_positions:
-        curr = get_constrain_num(sudoku_state, position[0], position[1])
-        if curr > max:
-            max = curr
-            max_row, max_col = position
-    return max_row, max_col
-
-
-def get_constrain_num(sudoku_state, row, col):
-    """
-    Finds the number of empty positions affecting the element
+    Finds the number of empty positions affecting the element todo: docstring + comments
 
     """
     counter = 0
@@ -62,26 +48,30 @@ def get_constrain_num(sudoku_state, row, col):
 
 def pick_next_cell(sudoku_state):
     """
+    # Todo fix comments + doc string
     Find the most constrained variable (value), i.e. the vacant position with the least possible values.
     Applies the minimum-remaining-values (MRV) heuristic. Iterates through each position and finds the position that is
     the most constrained (i.e. has the least possible moves).
     :param sudoku_state: The sudoku state to apply the heuristic to (SudokuState Object).
     :return: The position (row, col) of the most constrained value.
     """
-    # min_row, min_col, curr_min = -1, -1, 9  # Assume most constrained position has 9 possible moves (max num of moves)
-    # for (row, col), values in np.ndenumerate(sudoku_state.possible_values):
-    #     if 0 < len(values) < curr_min:  # Check if the current variable is more constrained (less possible moves)
-    #         min_row, min_col = row, col
-    #         curr_min = len(values)  # Update current minimum number of moves
-    #         if curr_min == 1:  # If it is a singleton, return it immediately
-    #             break
-    # return min_row, min_col
-    return get_max_constrain(sudoku_state)
+    """
+    Find the position which is affected by the most number of other empty cells (use MRV and max degree heuristic)
+    """
+    minimum_value_positions = get_minimum_value_pos(sudoku_state)
+    max_row, max_col = -1, -1
+    max = 0
+    for position in minimum_value_positions:
+        curr = get_constrain_number(sudoku_state, position[0], position[1])
+        if curr > max:
+            max = curr
+            max_row, max_col = position
+    return max_row, max_col
 
 
 def depth_first_search(sudoku_state):
     """
-    TODO Write up
+    TODO Write up docstring
     :param sudoku_state:
     :return:
     """
