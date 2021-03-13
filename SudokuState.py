@@ -124,6 +124,12 @@ class SudokuState:
                     self.possible_values[block_row + row][block_col + col].remove(value)
         return
 
+    def copy_state(self):
+        new_state = SudokuState(np.ndarray.copy(self.final_values))
+        for (row, col), values in np.ndenumerate(self.possible_values):
+            new_state.possible_values[row][col] = values[:]
+        return new_state
+
     def gen_next_state(self, row, col, value):
         """
         Generates the board configuration after we place the given value in position (row, col). Places the value in
@@ -133,7 +139,8 @@ class SudokuState:
         :param value: The value to place in the row, col.
         :return: The generated board state after placing the given value in the specified row, col.
         """
-        state = copy.deepcopy(self)  # Create a copy of the current state (board and possible values)
+        state = self.copy_state()  # Create a copy of the current state (board and possible values)
+        # state = copy.deepcopy(self)  # TODO REMOVE
         # Update the board configuration:
         state.final_values[row][col] = value
         state.possible_values[row][col] = []
