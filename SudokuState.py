@@ -1,8 +1,10 @@
-import copy
 import numpy as np
 
 
 class SudokuState:
+    """
+    Represents a Sudoku board configuration (the final board values) and the possible moves for the board.
+    """
     def __init__(self, final_values):
         """
         Creates a SudokuState Object following the given board specifications.
@@ -125,10 +127,15 @@ class SudokuState:
         return
 
     def copy_state(self):
-        new_state = SudokuState(np.ndarray.copy(self.final_values))
+        """
+        Creates and returns a copy of the current state. Copies the final_values and possible_values of the object.
+        Used to overcome the overheads associated with __deepcopy__.
+        :return: A copy of the current state (SudokuState object).
+        """
+        new_state = SudokuState(np.ndarray.copy(self.final_values))  # Copy final values using numpy's built-in copy
         for (row, col), values in np.ndenumerate(self.possible_values):
-            new_state.possible_values[row][col] = values[:]
-        return new_state
+            new_state.possible_values[row][col] = values[:]  # Copy over each list of possible values
+        return new_state  # Return a SudokuState with the copied values
 
     def gen_next_state(self, row, col, value):
         """
@@ -139,8 +146,7 @@ class SudokuState:
         :param value: The value to place in the row, col.
         :return: The generated board state after placing the given value in the specified row, col.
         """
-        state = self.copy_state()  # Create a copy of the current state (board and possible values)
-        # state = copy.deepcopy(self)  # TODO REMOVE
+        state = self.copy_state()  # Create a copy of the current state (final and possible values)
         # Update the board configuration:
         state.final_values[row][col] = value
         state.possible_values[row][col] = []
