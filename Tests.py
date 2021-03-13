@@ -10,6 +10,7 @@ def run_tests(difficulties=None):
     if difficulties is None:
         difficulties = ['very_easy', 'easy', 'medium', 'hard']
 
+    very_start_time = time.process_time()
     for difficulty in difficulties:
         print(f"Testing {difficulty} sudokus")
 
@@ -43,6 +44,9 @@ def run_tests(difficulties=None):
         print(f"{count}/{len(sudokus)} {difficulty} sudokus correct")
         if count < len(sudokus):
             break
+    very_end_time = time.process_time()
+    print("===========================\n")
+    print("THE ENTIRE SOLUTION TAKES: ", very_end_time-very_start_time, " seconds")
 
 
 if __name__ == "__main__":
