@@ -51,7 +51,8 @@ class SudokuState:
         # Check each element in the 3x3 block:
         for row in range(3):
             for col in range(3):
-                if value == self.final_values[block_row + row][block_col + col] and block_row + row != target_row and block_col + col != target_col:
+                if value == self.final_values[block_row + row][
+                    block_col + col] and block_row + row != target_row and block_col + col != target_col:
                     return False  # Value appears in the same block
 
         return True  # Value does not appear in the same row, col or block
@@ -73,8 +74,8 @@ class SudokuState:
         Checks if the board is solvable, i.e. each empty position has at least one possible value.
         :return: True if the board is solvable
         """
-        for (row, col), value in np.ndenumerate(self.final_values):
-            if value == 0 and len(self.possible_values[row][col]) < 1:
+        for row, col in np.ndindex(9, 9):
+            if len(self.possible_values[row][col]) < 1 and self.final_values[row][col] == 0:
                 return False
         return True
 
@@ -90,41 +91,49 @@ class SudokuState:
         """
         Generates a list with the coordinates of all the empty slots that have only 1 possible value (singletons).
         Called after assignment (generate of new board).
-        :return: List with the coordinates of all the singleton values.
+        :return: List with the coordinates of all the singleton values (row, col).
         """
-        singletons = []
+        singleton_list = []  # List holding singleton positions (row, col)
         for row in range(9):
             for col in range(9):
                 if len(self.possible_values[row][col]) == 1 and self.final_values[row][col] == 0:
-                    singletons.append([row, col])
-        return singletons
+                    singleton_list.append((row, col))  # If it is vacant and has only one possible value append it
+        return singleton_list
 
     def update_constraints(self, target_row, target_col, value):
         """
-        Update the possible values, following an assignment to the given position (row, col).
-        Find and update the affected positions, applying the constraints.
+        Update the board's possible values, following an assignment to the given position (row, col).
+        Find and update the affected positions, updating their constraints.
+        :param target_row: The row that the value is to be placed.
+        :param target_col: The column that the value is to be placed.
+        :param value: The value that is to be placed in the provided position.
+        :return: None
         """
         for i in range(9):
-            if value in self.possible_values[target_row][i]:  # checks the horizontal
+            if value in self.possible_values[target_row][i]:  # Update the column
                 self.possible_values[target_row][i].remove(value)
-            if value in self.possible_values[i][target_col]:  # checks the vertical
+            if value in self.possible_values[i][target_col]:  # Update the row
                 self.possible_values[i][target_col].remove(value)
 
-        # checks the box
+        # Update the block:
         block_row = target_row - (target_row % 3)
         block_col = target_col - (target_col % 3)
         for row in range(3):
             for col in range(3):
-                if value in self.possible_values[block_row + row][block_col + col]:
+                if value in self.possible_values[block_row + row][block_col + col]:  # Remove possible value from block
                     self.possible_values[block_row + row][block_col + col].remove(value)
+        return
 
     def gen_next_state(self, row, col, value):
         """
         Generates the board configuration after we place the given value in position (row, col). Places the value in
         the specified position, iterates through the affected positions and updates their constraints.
-        :return:
+        :param row: The row to place the given value in.
+        :param col: The column to place the given value in.
+        :param value: The value to place in the row, col.
+        :return: The generated board state after placing the given value in the specified row, col.
         """
-        state = copy.deepcopy(self)  # Create a copy of the current state (board)
+        state = copy.deepcopy(self)  # Create a copy of the current state (board and possible values)
         # Update the board configuration:
         state.final_values[row][col] = value
         state.possible_values[row][col] = []
