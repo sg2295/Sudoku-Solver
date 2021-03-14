@@ -119,7 +119,7 @@ def sudoku_solver(sudoku):
     solved.init_constraints()  # Generate the initial possible values
     solved = depth_first_search(solved)  # Attempt to solve the board using depth-first search
 
-    if solved is None:
+    if not solved:
         return np.full(shape=(9, 9), fill_value=-1, dtype=int)  # Return 9x9 matrix of -1s if it has no solution
 
     return solved.final_values  # Return the final sudoku board configuration
