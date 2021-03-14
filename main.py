@@ -91,7 +91,7 @@ def depth_first_search(sudoku_state):
             return new_state  # If it is a goal state return it
         if new_state.is_solvable():
             deep_state = depth_first_search(new_state)
-            if deep_state is not None and deep_state.is_goal():
+            if deep_state and deep_state.is_goal():
                 return deep_state  # If it is a goal state return it
 
     return None
