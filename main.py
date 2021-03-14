@@ -10,14 +10,14 @@ def get_min_value_positions(sudoku_state):
     :return: A list of the positions with the minimum remaining values.
     """
     position_choices = {}  # Holds list of positions (value) for each number 0 - 9 (key)
-    for key in range(9):  # Populate dictionary with empty lists
+    for key in range(10):  # Populate dictionary with empty lists
         position_choices[key] = []
 
     for (row, col), values in np.ndenumerate(sudoku_state.possible_values):
         position_choices[len(values)].append((row, col))  # Iterate through each empty position and add to dict
 
     # Find the position(s) with the minimum possible moves
-    for i in range(1, 9):
+    for i in range(1, 10):
         if position_choices[i]:
             return position_choices[i]  # Return the list with the least remaining values
 
@@ -110,6 +110,9 @@ def sudoku_solver(sudoku):
         9x9 numpy array of integers
             It contains the solution, if there is one. If there is no solution, all array entries should be -1.
     """
+    if 0 not in sudoku:  # Check that the board is not already solved TODO, DECIDE TO KEEP OR NOT
+        return sudoku  # If it is, return it (no need to search for a solution)
+
     solved = SudokuState.SudokuState(sudoku)
     if not solved.is_valid_board():  # Check that the board is a valid configuration (contains unique values).
         return np.full(shape=(9, 9), fill_value=-1, dtype=int)  # Return 9x9 matrix of -1s if it is not solvable
