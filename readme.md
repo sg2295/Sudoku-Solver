@@ -8,16 +8,27 @@ Sudoku is a logic-based, number-placement puzzle. Each board consists of a 9x9 g
 ### Constraint Satisfaction Problems (CSP)
 A constraint satisfaction problem (CSP) is a problem that involves a number of variables which can be assigned multiple values, based on some constraints. [1] 
 
-Alternatively, constraint satisfaction problems can be recognised by the presence of:
+Constraint satisfaction problems can be recognised by the presence of:
 - A set of variables, *X = {X<sub>1</sub>, ..., X<sub>n</sub>}*,
 - A set of domains, *D = {D<sub>1</sub>, ..., D<sub>n</sub>}* for each variable, and
 - A set of constraints *C* which specify the legal combinations of values. [2]
 
 Where domain *D<sub>i</sub>* contains a set of possible values *{v<sub>1</sub>, ..., v<sub>n</sub>}*, that can be assigned to variable *X<sub>i</sub>*. Additionally, each *v<sub>i</sub>* in a given domain must comply with the constraints defined by *C*.
 
-Constraint satisfaction problems make use of 
+Constraint satisfaction problems introduce the notion of states and assignments. Russel and Norvig define states as "an assignment of values to some or all of the variables" [2]. Assignments can be **complete** or **partial**. An assignment is called complete when every variable has been assigned a value, while a partial assignment is one that only some variables have been assigned values. An assignment is called **consistent** (or legal) when it adheres to the constraints. If an assignment is both complete and consistent, then it is a **solution** to the problem.
 
 ### Sudoku as a CSP
+Sudoku can be represented as a constraint satisfaction problem, where:
+- *X = {X<sub>1</sub>, ..., X<sub>n</sub>}* is the set of variables,
+- *D<sub>i</sub> = {1, 2, 3, 4, 5, 6, 7, 8, 9}* is the domain describing the values each variable can be assigned (*X<sub>i</sub> ∈ D*), and
+- *C = "Each value appears once in each row, column and 3x3 block of the grid "*
+
+In Sudoku, a 
+
+COMPLETE --> each cell has been assigned a value i.e. there are no empty spaces
+PARTIAL --> there are empty cells
+
+CONSISTENT --> each value appears once in each row, column and block
 
 ## Approach
 Use a **back-tracking search**, following a combination of **depth-first search** (DFS) and **constraint propagation**.
