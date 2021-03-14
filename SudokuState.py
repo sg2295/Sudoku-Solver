@@ -146,17 +146,17 @@ class SudokuState:
         :param value: The value to place in the row, col.
         :return: The generated board state after placing the given value in the specified row, col.
         """
-        state = self.copy_state()  # Create a copy of the current state (final and possible values)
+        new_state = self.copy_state()  # Create a copy of the current state (final and possible values)
         # Update the board configuration:
-        state.final_values[row][col] = value
-        state.possible_values[row][col] = []
+        new_state.final_values[row][col] = value
+        new_state.possible_values[row][col] = []  # Position has been filled so it no longer has possible moves
 
-        state.update_constraints(row, col, value)  # Update affected possible values (apply constraints)
+        new_state.update_constraints(row, col, value)  # Update affected possible values (apply constraints)
 
-        singleton_list = state.get_singletons()  # Find singletons for the new board configuration
+        singleton_list = new_state.get_singletons()  # Find singletons for the new board configuration
         while singleton_list:
             row, col = singleton_list[0]
-            state = state.gen_next_state(row, col, state.possible_values[row][col][0])  # Generate new state
-            singleton_list = state.get_singletons()  # Get the remaining singletons
+            new_state = new_state.gen_next_state(row, col, new_state.possible_values[row][col][0])  # Generate new state
+            singleton_list = new_state.get_singletons()  # Get the remaining singletons
 
-        return state
+        return new_state  # Return the resulting state
