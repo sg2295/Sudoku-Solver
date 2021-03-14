@@ -2,7 +2,7 @@ import SudokuState
 import numpy as np
 
 
-def get_minimum_value_pos(sudoku_state):
+def get_min_value_positions(sudoku_state):
     """
     Finds the minimum remaining values for any state in the board, and then finds all positions that have the same
     number of values, i.e. all the states that have the minimum number of remaining values.
@@ -22,22 +22,21 @@ def get_minimum_value_pos(sudoku_state):
             return position_choices[i]  # Return the list with the least remaining values
 
 
-def get_constrain_number(sudoku_state, row, col):
+def get_degree(sudoku_state, row, col):
     """
     Finds the number of empty positions affecting the element, i.e. the empty positions on the same row, column
-    and block.
-    todo: docstring + comments CHANGE FUNCTION NAME
+    and block. Used for the degree heuristic.
     :param sudoku_state: The sudoku state to evaluate (SudokuState Object).
     :param row: The row of the position to be evaluated.
-    :param col: The column of the cell the position to be evaluated.
-    :return: The number of positions that the current position affects (and is affected by).
+    :param col: The column of the position to be evaluated.
+    :return: The given position's degree (the number of empty positions on the same row, column and block).
     """
-    counter = 0  # Holds the number of empty positions on the same row, column and block
+    degree_counter = 0  # Holds the number of empty positions on the same row, column and block
     for i in range(9):
         if sudoku_state.final_values[row][i] == 0:  # Search the column
-            counter += 1
+            degree_counter += 1
         if sudoku_state.final_values[i][col] == 0:  # Search the row
-            counter += 1
+            degree_counter += 1
 
     # Find start of 3x3 block:
     block_row = row - (row % 3)
@@ -47,38 +46,40 @@ def get_constrain_number(sudoku_state, row, col):
     for temp_row in range(3):
         for temp_col in range(3):
             if sudoku_state.final_values[temp_row + block_row][temp_col + block_col]:  # Empty position in block
-                counter += 1
+                degree_counter += 1
 
-    return counter  # Return the number of positions affected by the current position
+    return degree_counter  # Return the number of positions affected by the current position
 
 
 def pick_next_cell(sudoku_state):
     """
-    Apply the minimum-remaining-values (MRV) heuristic, then the max-degree heuristic to find the most suitable move.
+    Apply the minimum-remaining-values (MRV) heuristic, then the degree heuristic to find the most suitable move.
     By combining these two heuristics we have a higher likelihood of resulting in an invalid board configuration faster,
     significantly improving runtime.
-    Minimum-remaining-values --> finds the position(s) with the least possible remaining moves.
-    Max-degree --> finds the position that affects (and is affected by) the maximum number of empty positions.
+    Minimum-remaining-values heuristic --> finds the position(s) with the least possible remaining moves.
+    Degree heuristic --> finds the position that affects (and is affected by) the maximum number of empty positions.
     :param sudoku_state: The sudoku state to apply the heuristics to (SudokuState Object).
     :return: The position (row, col) of the most constrained value.
     """
-    minimum_value_positions = get_minimum_value_pos(sudoku_state)  # Get the positions (row, col) with the minimum moves
-    max_row, max_col, max_constrain = -1, -1, 0
-    for position in minimum_value_positions:
-        curr_constrain = get_constrain_number(sudoku_state, position[0], position[1])
-        if curr_constrain > max_constrain:
-            max_constrain = curr_constrain
+    # Use the minimum-remaining values heuristic:
+    min_value_positions = get_min_value_positions(sudoku_state)  # Get the positions (row, col) with the minimum moves
+    # Use the degree heuristic:
+    max_row, max_col, max_degree = -1, -1, 0  # Assume the highest degree is 0 at first
+    for position in min_value_positions:  # Loop through all of the minimum-remaining-values positions
+        curr_degree = get_degree(sudoku_state, position[0], position[1])  # Get the degree for the position
+        if curr_degree > max_degree:
+            max_degree = curr_degree  # If the current degree is higher than the max, update the max
             max_row, max_col = position
-    return max_row, max_col
+    return max_row, max_col  # Return the coordinates of the position with the highest degree
 
 
 def depth_first_search(sudoku_state):
     """
     Uses the depth-first search (DFS) algorithm to find a solution (if it exists) to the given Sudoku board.
-    Makes use of the minimum-remaining-value (MRV) and max-degree heuristics to find a solution to the given board, if
+    Makes use of the minimum-remaining-value (MRV) and degree heuristics to find a solution to the given board, if
     a solution exists. After selecting a position to fill, it creates a new SudokuState object for each possible value
     of the current position. It then recursively calls itself until it finds the solution, or an invalid state,
-    backtracking if needed.
+    backtracking if needed. Uses forward checking to identify dead-ends without going "deep".
     :param sudoku_state: Sudoku board configuration to be evaluated (SudokuState object).
     :return: The SudokuState representing the solved board, or None (indicating it is not solvable).
     """
