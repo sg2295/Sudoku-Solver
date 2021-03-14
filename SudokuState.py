@@ -53,9 +53,8 @@ class SudokuState:
         # Check each element in the 3x3 block:
         for row in range(3):
             for col in range(3):
-                if value == self.final_values[block_row + row][
-                    block_col + col] and block_row + row != target_row and block_col + col != target_col:
-                    return False  # Value appears in the same block
+                if value == self.final_values[block_row + row][block_col + col] and block_row + row != target_row and block_col + col != target_col:
+                    return False  # Value appears in the same block twice
 
         return True  # Value does not appear in the same row, col or block
 
@@ -83,9 +82,10 @@ class SudokuState:
 
     def is_goal(self):
         """
-        :return: True if every position has a value (no zeroes in the state), otherwise False
+        Checks if the board has been solved, i.e. there are no empty positions (signified by zeroes).
+        :return: True if every position has a value (no zeroes in the state), otherwise False.
         """
-        if 0 in self.final_values:
+        if 0 in self.final_values:  # Check if any zeroes are in the final states
             return False
         return True
 
@@ -153,7 +153,7 @@ class SudokuState:
 
         state.update_constraints(row, col, value)  # Update affected possible values (apply constraints)
 
-        singleton_list = state.get_singletons()  # Find singletons for this board configuration
+        singleton_list = state.get_singletons()  # Find singletons for the new board configuration
         while singleton_list:
             row, col = singleton_list[0]
             state = state.gen_next_state(row, col, state.possible_values[row][col][0])  # Generate new state

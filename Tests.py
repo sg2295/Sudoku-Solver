@@ -5,6 +5,7 @@ import numpy as np
 
 # Provided testing code, from University of Bath
 
+# todo extra tests: https://www.kaggle.com/bryanpark/sudoku
 
 def run_tests(difficulties=None):
     if difficulties is None:
@@ -49,7 +50,51 @@ def run_tests(difficulties=None):
     print("THE ENTIRE SOLUTION TAKES: ", very_end_time-very_start_time, " seconds")
 
 
+def extra_tests():
+    """
+    Extra tests to make sure the current approach is indeed correct.
+    :return:
+    """
+    quizzes = np.zeros((1000000, 81), np.int32)
+    solutions = np.zeros((1000000, 81), np.int32)
+    for i, line in enumerate(open('data/sudoku.csv', 'r').read().splitlines()[1:]):
+        quiz, solution = line.split(",")
+        for j, q_s in enumerate(zip(quiz, solution)):
+            q, s = q_s
+            quizzes[i, j] = q
+            solutions[i, j] = s
+    quizzes = quizzes.reshape((-1, 9, 9))
+    solutions = solutions.reshape((-1, 9, 9))
+    print("Size: ", quizzes.size)
+    input("okay?")
+    puzzles_num = 10000
+    times, count = 0, 0
+    very_start_time = time.process_time()
+    for quiz, solution in zip(quizzes[:puzzles_num], solutions[:puzzles_num]):
+
+        # print(quiz)
+        start_time = time.process_time()
+        your_solution = main.sudoku_solver(quiz.copy())
+        end_time = time.process_time()
+
+        times += end_time-start_time
+        count += 1
+        # print(your_solution)
+        if not np.array_equal(your_solution, solution):
+            print("Wrong solution for: ", quiz)
+            break # TODO REMOVE
+        # print("Time to solve: ", end_time-start_time, " seconds")
+
+    very_end_time = time.process_time()
+    print("===========================\n")
+    print("THE ENTIRE SOLUTION TAKES: ", very_end_time-very_start_time, " seconds")
+    print("===========================\n")
+    print("Average solve time: ", times/count, " seconds")
+    pass
+
+
 if __name__ == "__main__":
     d = ["hard"]
     # run_tests(d)
     run_tests()
+    # extra_tests()

@@ -4,33 +4,39 @@ import numpy as np
 
 def get_minimum_value_pos(sudoku_state):
     """
-    Finds the most constrained value, then finds all positions that have the same constrain value
-    # todo comments + docstring + dictionary O(n) + O(1) instead of O(2n)
+    Finds the minimum remaining values for any state in the board, and then finds all positions that have the same
+    number of values, i.e. all the states that have the minimum number of remaining values.
+    :param sudoku_state: The sudoku state to apply the heuristic to (SudokuState Object).
+    :return: A list of the positions with the minimum remaining values.
     """
-    min_row, min_col, curr_min = -1, -1, 9  # Assume most constrained position has 9 possible moves (max num of moves)
-    for (row, col), values in np.ndenumerate(sudoku_state.possible_values):
-        if 0 < len(values) < curr_min:  # Check if the current variable is more constrained (less possible moves)
-            min_row, min_col = row, col
-            curr_min = len(values)  # Update current minimum number of moves
+    position_choices = {}  # Holds list of positions (value) for each number 0 - 9 (key)
+    for key in range(9):  # Populate dictionary with empty lists
+        position_choices[key] = []
 
-    mrv_positions = []  # Todo: can make this with 1 loop if i use dictionary/hashmap
     for (row, col), values in np.ndenumerate(sudoku_state.possible_values):
-        if len(values) == curr_min:
-            mrv_positions.append((row, col))
+        position_choices[len(values)].append((row, col))  # Iterate through each empty position and add to dict
 
-    return mrv_positions
+    # Find the position(s) with the minimum possible moves
+    for i in range(1, 9):
+        if position_choices[i]:
+            return position_choices[i]  # Return the list with the least remaining values
 
 
 def get_constrain_number(sudoku_state, row, col):
     """
-    Finds the number of empty positions affecting the element todo: docstring + comments
-
+    Finds the number of empty positions affecting the element, i.e. the empty positions on the same row, column
+    and block.
+    todo: docstring + comments CHANGE FUNCTION NAME
+    :param sudoku_state: The sudoku state to evaluate (SudokuState Object).
+    :param row: The row of the position to be evaluated.
+    :param col: The column of the cell the position to be evaluated.
+    :return: The number of positions that the current position affects (and is affected by).
     """
-    counter = 0
+    counter = 0  # Holds the number of empty positions on the same row, column and block
     for i in range(9):
-        if sudoku_state.final_values[row][i] == 0 and i != col:
+        if sudoku_state.final_values[row][i] == 0:  # Search the column
             counter += 1
-        if sudoku_state.final_values[i][col] == 0 and i != row:
+        if sudoku_state.final_values[i][col] == 0:  # Search the row
             counter += 1
 
     # Find start of 3x3 block:
@@ -40,42 +46,43 @@ def get_constrain_number(sudoku_state, row, col):
     # Check each element in the 3x3 block:
     for temp_row in range(3):
         for temp_col in range(3):
-            if sudoku_state.final_values[temp_row + block_row][temp_col + block_col] and temp_row + block_row != row and temp_col + block_col != col:
+            if sudoku_state.final_values[temp_row + block_row][temp_col + block_col]:  # Empty position in block
                 counter += 1
 
-    return counter
+    return counter  # Return the number of positions affected by the current position
 
 
 def pick_next_cell(sudoku_state):
     """
-    # Todo fix comments + doc string
-    Find the most constrained variable (value), i.e. the vacant position with the least possible values.
-    Applies the minimum-remaining-values (MRV) heuristic. Iterates through each position and finds the position that is
-    the most constrained (i.e. has the least possible moves).
-    :param sudoku_state: The sudoku state to apply the heuristic to (SudokuState Object).
+    Apply the minimum-remaining-values (MRV) heuristic, then the max-degree heuristic to find the most suitable move.
+    By combining these two heuristics we have a higher likelihood of resulting in an invalid board configuration faster,
+    significantly improving runtime.
+    Minimum-remaining-values --> finds the position(s) with the least possible remaining moves.
+    Max-degree --> finds the position that affects (and is affected by) the maximum number of empty positions.
+    :param sudoku_state: The sudoku state to apply the heuristics to (SudokuState Object).
     :return: The position (row, col) of the most constrained value.
     """
-    """
-    Find the position which is affected by the most number of other empty cells (use MRV and max degree heuristic)
-    """
-    minimum_value_positions = get_minimum_value_pos(sudoku_state)
-    max_row, max_col = -1, -1
-    max = 0
+    minimum_value_positions = get_minimum_value_pos(sudoku_state)  # Get the positions (row, col) with the minimum moves
+    max_row, max_col, max_constrain = -1, -1, 0
     for position in minimum_value_positions:
-        curr = get_constrain_number(sudoku_state, position[0], position[1])
-        if curr > max:
-            max = curr
+        curr_constrain = get_constrain_number(sudoku_state, position[0], position[1])
+        if curr_constrain > max_constrain:
+            max_constrain = curr_constrain
             max_row, max_col = position
     return max_row, max_col
 
 
 def depth_first_search(sudoku_state):
     """
-    TODO Write up docstring
-    :param sudoku_state:
-    :return:
+    Uses the depth-first search (DFS) algorithm to find a solution (if it exists) to the given Sudoku board.
+    Makes use of the minimum-remaining-value (MRV) and max-degree heuristics to find a solution to the given board, if
+    a solution exists. After selecting a position to fill, it creates a new SudokuState object for each possible value
+    of the current position. It then recursively calls itself until it finds the solution, or an invalid state,
+    backtracking if needed.
+    :param sudoku_state: Sudoku board configuration to be evaluated (SudokuState object).
+    :return: The SudokuState representing the solved board, or None (indicating it is not solvable).
     """
-    row, col = pick_next_cell(sudoku_state)
+    row, col = pick_next_cell(sudoku_state)  # Pick position for next move
     values = sudoku_state.possible_values[row][col]
 
     for value in values:  # For each possible value
@@ -109,8 +116,8 @@ def sudoku_solver(sudoku):
     if not solved.is_valid_board():  # Check that the board is a valid configuration (contains unique values).
         return np.full(shape=(9, 9), fill_value=-1, dtype=int)  # Return 9x9 matrix of -1s if it is not solvable
 
-    solved.init_constraints()  # Create initial
-    solved = depth_first_search(solved)
+    solved.init_constraints()  # Generate the initial possible values
+    solved = depth_first_search(solved)  # Attempt to solve the board using depth-first search
 
     if solved is None:
         return np.full(shape=(9, 9), fill_value=-1, dtype=int)  # Return 9x9 matrix of -1s if it has no solution
