@@ -109,9 +109,6 @@ def sudoku_solver(sudoku):
     Output
         9x9 numpy array of integers
             It contains the solution, if there is one. If there is no solution, all array entries should be -1.
-
-    :param sudoku:
-    :return:
     """
     solved = SudokuState.SudokuState(sudoku)
     if not solved.is_valid_board():  # Check that the board is a valid configuration (contains unique values).
