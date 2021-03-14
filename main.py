@@ -110,12 +110,12 @@ def sudoku_solver(sudoku):
         9x9 numpy array of integers
             It contains the solution, if there is one. If there is no solution, all array entries should be -1.
     """
-    if 0 not in sudoku:  # Check that the board is not already solved TODO, DECIDE TO KEEP OR NOT
-        return sudoku  # If it is, return it (no need to search for a solution)
-
     solved = SudokuState.SudokuState(sudoku)
     if not solved.is_valid_board():  # Check that the board is a valid configuration (contains unique values).
         return np.full(shape=(9, 9), fill_value=-1, dtype=int)  # Return 9x9 matrix of -1s if it is not solvable
+
+    if solved.is_goal():  # Check if the given board is already solved
+        return solved.final_values  # If it is already solved, return it
 
     solved.init_constraints()  # Generate the initial possible values
     solved = depth_first_search(solved)  # Attempt to solve the board using depth-first search

@@ -98,3 +98,7 @@ if __name__ == "__main__":
     # run_tests(d)
     run_tests()
     # extra_tests()
+    # s = np.full(shape=(9,9), fill_value=9, dtype=int)
+    # solutions = np.load("data/very_easy_solution.npy")
+    # print(main.sudoku_solver(solutions[0]))
+    # print(main.sudoku_solver(s))
