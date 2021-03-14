@@ -1,6 +1,6 @@
 # Sudoku Solver
 ## Introduction
-This project is an agent capable of solving Sudoku puzzles of varying difficulties using a backtracking search, by combining depth-first search and constraint propagation. The implementation incorporates heuristic functions to make educated decisions when choosing which move to make next.
+This project is an agent capable of solving Sudoku puzzles of varying difficulties using a backtracking search, by combining **depth-first search** and **constraint propagation**. The implementation incorporates heuristic functions to make educated decisions when choosing which move to make next.
 
 ### Sudoku Puzzles (The Game)
 Sudoku is a logic-based, number-placement puzzle. Each board consists of a 9x9 grid with a some fixed values. Each position, also called a cell, can hold a value between 1 and 9. A puzzle is completed when each position has been assigned a value, such that each value appears once per row, column, and 3x3 block of the grid.
@@ -25,17 +25,31 @@ Sudoku can be represented as a constraint satisfaction problem, where:
 
 ## Approach TODO
 Employ a **back-tracking search**, using a combination of **depth-first search** (DFS) and **constraint propagation**.
+
+
+
 ### Heuristics TODO
-#### Variable Heuristics TODO
-Uses the **minimum-remaining values** (MRV) heuristic, which picks the "most constrained variable" every time it makes a choice. In other words, it chooses the variable that is most likely to result in an invalid state. (Page 216-17)
+Two heuristics are used to make an educated 
+#### Minimum-remaining-values (MRV)  TODO
+Narrows down the most ideal positions to fill in first
+
+#### Degree  TODO
+Good for when we have a lot of possible candidates.
+
+
+Uses the **minimum-remaining-values** (MRV) heuristic, which picks the "most constrained variable" every time it makes a choice. In other words, it chooses the variable that is most likely to result in an invalid state. (Page 216-17)
 
 The algorithm works as follows:
 1. Pick the most constrained value
 1. Get the resulting state
 1. If the state is valid, repeat steps 1-3. Otherwise, exit (no solution exists).
 
+
+
 #### Value Heuristics TODO !!! (PLACEHOLDER, PENDING)
 - ADD LEAST-CONSTRAINED VALUE HERE
+
+
 ## Results TODO
 Minimum-remaining-values heuristic was found to have the greatest impact<br>
 Degree heuristic improved overall runtime
@@ -56,9 +70,9 @@ Multi-threading was beyond the scope of this project and as such was not include
 
 Apart from a constraint satisfaction problem, Sudoku can also be represented as an exact cover problem. Exact cover problems are decision problems which can be represented by a set and a collection of its subsets. Knuth's *Algorithm X* is capable of solving exact cover problems and if implemented correctly using *Dancing links* is a very efficient approach. [3] As further work, this approach should be explored further, implemented and compared with the current solution.
 
-## References TODO: CONVERT TO B. REFERENCING STYLE
-[1] Rossi, Francesca. *Handbook of constraint programming*. Elsevier, 2006.
+## References
+[1] Rossi, F., 2006. *Handbook of constraint programming*. Amsterdam: Elsevier.
 
-[2] Norvig, Peter, Russel, Stuart. *Artificial Intelligence: A Modern Approach 3rd Edition*. Pearson Education, 2016.
+[2] Norvig, P., Russel, S., 2016. *Artificial Intelligence: A Modern Approach*. Third Edition. Harlow: Pearson Education.
 
-[3] Knuth, Donald. *Dancing links*. 2000. Available at: https://arxiv.org/pdf/cs/0011047.pdf.
+[3] Knuth, D. E., 2000. *Dancing links* [Online]. Stanford: University of Stanford. Available from: https://arxiv.org/pdf/cs/0011047.pdf [Accessed 14 June 2021].
