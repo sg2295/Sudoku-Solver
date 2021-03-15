@@ -13,11 +13,15 @@ def get_min_value_positions(sudoku_state):
     for key in range(10):  # Populate dictionary with empty lists
         position_choices[key] = []
 
-    for (row, col), values in np.ndenumerate(sudoku_state.possible_values):
-        position_choices[len(values)].append((row, col))  # Iterate through each empty position and add to dict
+    # for (row, col), values in np.ndenumerate(sudoku_state.possible_values):
+    #     position_choices[len(values)].append((row, col))  # Iterate through each empty position and add to dict
+
+    for (row, col), value in np.ndenumerate(sudoku_state.final_values):  # TODO decide which to use correct one is this
+        if value == 0:
+            position_choices[len(sudoku_state.possible_values[row][col])].append((row, col))  # Iterate through each empty position and add to dict
 
     # Find the position(s) with the minimum possible moves
-    for i in range(1, 10):
+    for i in range(10):  # WAS 1, 10 BEFORE TODO
         if position_choices[i]:
             return position_choices[i]  # Return the list with the least remaining values
 
