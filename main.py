@@ -7,13 +7,13 @@ def get_min_value_positions(sudoku_state):
     Finds the minimum remaining values for any state in the board, and then finds all positions that have the same
     number of values, i.e. all the states that have the minimum number of remaining values.
     :param sudoku_state: The sudoku state to apply the heuristic to (SudokuState Object).
-    :return: A list of the positions with the minimum remaining values.
+    :return: A list of the positions with the minimum remaining values. TODO DECIDE
     """
     position_choices = {}  # Holds list of positions (value) for each number 0 - 9 (key)
     for key in range(10):  # Populate dictionary with empty lists
         position_choices[key] = []
 
-    # for (row, col), values in np.ndenumerate(sudoku_state.possible_values):
+    # for (row, col), values in np.ndenumerate(sudoku_state.possible_values): # TODO DECIDE
     #     position_choices[len(values)].append((row, col))  # Iterate through each empty position and add to dict
 
     for (row, col), value in np.ndenumerate(sudoku_state.final_values):  # TODO decide which to use correct one is this
@@ -126,7 +126,7 @@ def depth_first_search(sudoku_state):
     """
     row, col = pick_next_cell(sudoku_state)  # Pick position for next move
     values = sudoku_state.possible_values[row][col]
-    # values = order_values(sudoku_state, row, col)
+    # values = order_values(sudoku_state, row, col) # TODO DECIDE
     for value in values:  # For each possible value
         new_state = sudoku_state.gen_next_state(row, col, value)  # Generate the resulting board
         if new_state.is_goal():
