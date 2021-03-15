@@ -7,21 +7,18 @@ def get_min_value_positions(sudoku_state):
     Finds the minimum remaining values for any state in the board, and then finds all positions that have the same
     number of values, i.e. all the states that have the minimum number of remaining values.
     :param sudoku_state: The sudoku state to apply the heuristic to (SudokuState Object).
-    :return: A list of the positions with the minimum remaining values. TODO DECIDE
+    :return: A list of the positions with the minimum remaining values.
     """
     position_choices = {}  # Holds list of positions (value) for each number 0 - 9 (key)
     for key in range(10):  # Populate dictionary with empty lists
         position_choices[key] = []
 
-    # for (row, col), values in np.ndenumerate(sudoku_state.possible_values): # TODO DECIDE
-    #     position_choices[len(values)].append((row, col))  # Iterate through each empty position and add to dict
-
-    for (row, col), value in np.ndenumerate(sudoku_state.final_values):  # TODO decide which to use correct one is this
-        if value == 0:
-            position_choices[len(sudoku_state.possible_values[row][col])].append((row, col))  # Iterate through each empty position and add to dict
+    for (row, col), final_value in np.ndenumerate(sudoku_state.final_values):
+        if final_value == 0:  # If it is an empty position
+            position_choices[len(sudoku_state.possible_values[row][col])].append((row, col))  # Add it to the dictionary
 
     # Find the position(s) with the minimum possible moves
-    for i in range(10):  # WAS 1, 10 BEFORE TODO
+    for i in range(10):
         if position_choices[i]:
             return position_choices[i]  # Return the list with the least remaining values
 
@@ -67,15 +64,17 @@ def pick_next_cell(sudoku_state):
     """
     # Use the minimum-remaining values heuristic:
     min_value_positions = get_min_value_positions(sudoku_state)  # Get the positions (row, col) with the minimum moves
-    if len(min_value_positions) == 1:  # If the MRV does not return multiple positions TODO DECIDE WHAT TO DO WITH IT
-        return min_value_positions[0][0], min_value_positions[0][1]  # Return the coordinates of the position TODO
+
+    if len(min_value_positions) == 1:  # If the MRV does not return multiple positions, don't apply degree heuristic
+        return min_value_positions[0][0], min_value_positions[0][1]  # Return the coordinates of the position
+
     # Use the degree heuristic:
     max_row, max_col, max_degree = -1, -1, 0  # Assume the highest degree is 0 at first
     for position in min_value_positions:  # Loop through all of the minimum-remaining-values positions
         curr_degree = get_degree(sudoku_state, position[0], position[1])  # Get the degree for the position
         if curr_degree > max_degree:
             max_degree = curr_degree  # If the current degree is higher than the max, update the max
-            max_row, max_col = position
+            max_row, max_col = position  # Update the coordinates of the max
     return max_row, max_col  # Return the coordinates of the position with the highest degree
 
 
