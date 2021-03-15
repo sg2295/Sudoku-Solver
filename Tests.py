@@ -5,7 +5,7 @@ import numpy as np
 
 # Provided testing code, from University of Bath
 
-# todo extra tests: https://www.kaggle.com/bryanpark/sudoku
+# Extra tests: https://www.kaggle.com/bryanpark/sudoku
 
 def run_tests(difficulties=None):
     if difficulties is None:
@@ -38,10 +38,10 @@ def run_tests(difficulties=None):
             else:
                 print("No, the correct solution is: --------------------------------------------------------------")
                 print(solutions[i])
-                break # TODO REMOVE
+                break
 
             print("This sudoku took", end_time - start_time, "seconds to solve.\n")
-            # return # TODO REMOVE
+
         print(f"{count}/{len(sudokus)} {difficulty} sudokus correct")
         if count < len(sudokus):
             break
@@ -82,7 +82,7 @@ def extra_tests():
         # print(your_solution)
         if not np.array_equal(your_solution, solution):
             print("Wrong solution for: ", quiz)
-            break # TODO REMOVE
+            break
         # print("Time to solve: ", end_time-start_time, " seconds")
 
     very_end_time = time.process_time()
