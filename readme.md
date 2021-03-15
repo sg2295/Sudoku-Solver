@@ -34,9 +34,7 @@ Two heuristics are used to make an informed decision regarding which empty posit
 The minimum-remaining-values heuristic, also called the "most constrained variable" heuristic, picks the position (variable) with the fewest possible values. [2] It picks a variable that has the highest likelihood of resulting in failure soon, reducing the number of computations otherwise spent searching other variables first. By extent, if a variable has no possible values left then it would be selected and result in failure straight away.
 
 #### Degree  TODO
-
-
-Good for when we have a lot of possible candidates.
+Since more than one variable (position) can have the same number of possible values, the MRV heuristic can return more than one variable. The degree heuristic is then used as a tie-breaker. The degree heuristic selects the variable with the most constraints on other unassigned variables, i.e. the position that affects the greatest number of empty positions. [2] To decide which position returned by the MRV heuristic should be picked, the degree heuristic function calculates the degree of each position (the number of other empty positions it affects) and returns the maximum.
 
 #### OLD VERSION (REMOVE)
 Uses the **minimum-remaining-values** (MRV) heuristic, which picks the "most constrained variable" every time it makes a choice. In other words, it chooses the variable that is most likely to result in an invalid state. (Page 216-17)
