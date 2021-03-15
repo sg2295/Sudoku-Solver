@@ -66,7 +66,6 @@ def extra_tests():
     quizzes = quizzes.reshape((-1, 9, 9))
     solutions = solutions.reshape((-1, 9, 9))
     print("Size: ", quizzes.size)
-    input("okay?")
     puzzles_num = 10000
     times, count = 0, 0
     very_start_time = time.process_time()
