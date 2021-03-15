@@ -31,7 +31,9 @@ If the given Sudoku board has a solution, the Solver will find it and return the
 
 
 A more detailed description of the approach can be seen below:
-1. The Solver is invoked by calling the `sudoku_solver` function in the driver code segment, and passing in the initial board. The Solver then checks if the given board adheres to the constraints, returning a 9x9 matrix of `-1`'s if it does not. It then evaluates whether the given board is a complete assignment (i.e. if it is already solved), to cover edge cases. 
+1. The Solver is invoked by calling the `sudoku_solver` function in the driver code segment, and passing in the initial board configuration. The Solver then checks if the given board adheres to the constraints, returning a 9x9 matrix of `-1`'s if it does not. It then evaluates whether the given board is a complete assignment (i.e. if it is already solved), to cover edge cases. 
+1. After the initial checks, the possible moves for each position of the board are initialized through `init_constraints`. This function iterates through each variable, defining its domain based on the problem's constraints. This process is computationally expensive and as such is only called once per Sudoku board. To update the possible moves for an assignment later on in the algorithm, the possible moves of the previous state are copied over and updated. This approach proved particularly effective in optimizing the performance of the algorithm.
+1. Once the possible values for each variable have been initialized, the `depth_first_search` function is called.
 
 ### Heuristics
 Two heuristics are used in the solution to make an informed decision regarding which empty position to pick next. These are the **minimum-remaining-values** (MRV) and **degree** heuristics and are used for variable ordering. By adding these heuristics and removing the previous static variable ordering, the runtime of the solution improved greatly.
