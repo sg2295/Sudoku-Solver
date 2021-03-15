@@ -27,8 +27,11 @@ Sudoku can be represented as a constraint satisfaction problem, where:
 ## Approach TODO
 The Solver makes use of a **backtracking search** algorithm, as explained in Norvig and Russel's *Artificial Intelligence: A Modern Approach*. [2] It uses a depth-first search that is capable of exploring and evaluating assignments, which can now be thought of as nodes. In each iteration, the implementation checks that the assignment is consistent, i.e. that it adheres to the constraints. If the current assignment is not consistent (does not adhere to the constraints), the algorithm backtracks to the last known consistent state and tries a different path. In each stage the algorithm first picks a variable (position) to fill next and then begins testing each of its possible values, exploring and evaluating each assignment. At first, a simple implementation of the algorithm using static variable (and value) ordering was created, and research into dynamic ordering was conducted. To improve the performance of the Solver, in the final implementation, two heuristics were employed to decide variable ordering. **THINK ABOUT VALUE ORDERING**
 
+If the given Sudoku board has a solution, the Solver will find it and return the resulting board configuration as a 2-dimensional `numpy` array. If the board does not have a solution, then the Solver will return a 9x9 `numpy` array filled with `-1`'s, indicating that the given board is unsolvable or is not a valid Sudoku board (i.e. the passed board does not adhere to the constraints).
+
+
 A more detailed description of the approach can be seen below:
-1. 
+1. The Solver is invoked by calling the `sudoku_solver` function in the driver code segment, and passing in the initial board. The Solver then checks if the given board adheres to the constraints, returning a 9x9 matrix of `-1`'s if it does not. It then evaluates whether the given board is a complete assignment (i.e. if it is already solved), to cover edge cases. 
 
 ### Heuristics
 Two heuristics are used in the solution to make an informed decision regarding which empty position to pick next. These are the **minimum-remaining-values** (MRV) and **degree** heuristics and are used for variable ordering. By adding these heuristics and removing the previous static variable ordering, the runtime of the solution improved greatly.
@@ -40,7 +43,7 @@ The minimum-remaining-values heuristic, also called the "most constrained variab
 Since more than one variable (position) can have the same number of possible values, the MRV heuristic can return multiple variable. The degree heuristic is then used as a tie-breaker. The degree heuristic selects the variable with the most constraints on other unassigned variables, i.e. the position that affects the greatest number of empty positions. [2] In other words, to decide which position returned by the MRV heuristic should be picked, the degree heuristic function calculates the degree of each position (the number of other empty positions it affects) and returns the maximum. **By using this, the solution requires less steps as it is not as likely it would need to backtrack** CHECK
 
 #### OLD VERSION (REMOVE)
-Uses the **minimum-remaining-values** (MRV) heuristic, which picks the "most constrained variable" every time it makes a choice. In other words, it chooses the variable that is most likely to result in an invalid state. (Page 216-17)
+Uses the **minimum-remaining-values** (MRV) heuristic, which picks the "most constrained variable" every time it makes a choice. In other words, it chooses the variable that is most likely to result in an invalid state. (Page 216-17).
 
 The algorithm works as follows:
 1. Pick the most constrained value
@@ -58,11 +61,11 @@ Prior to including heuristics in the solution, the solver would use static varia
 
 
 ## Discussion
-### Value Ordering MAYBE INCLUDE ? COULD BE MOVED TO FUTURE WORK ?
-Least-constrained value was added in a previous iteration of the solution but it was found that the heuristic resulted in slightly increased runtimes, as a notable portion of the time was spent trying to order the values. This was mainly due restrictions of the implementation, requiring two parallel lists to be sorted for every decision. Choice of sorting algorithms did not improve this and after implementing insertion sort, which is ideal for small data sets, it was decided that this heuristic should be removed.
+### Value Ordering MAYBE INCLUDE ? COULD BE MOVED TO FUTURE WORK ? **TODO**
+Least-constrained value was added in a previous iteration of the solution, but it was found that the heuristic resulted in slightly increased runtimes, as a notable portion of the time was spent trying to order the values. This was mainly due restrictions of the implementation, requiring two parallel lists to be sorted for every decision. Choice of sorting algorithms did not improve this and after implementing insertion sort, which is ideal for small data sets, it was decided that this heuristic should be removed.
 
 ### Code Optimization TODO
-**In order for the agent to be able to solve hard Sudoku puzzles in a small timeframe, the implementation had to be optimized. In this capacity, the choice of data structures and algorithms used was** <------ TODODDOOD
+**In order for the agent to be able to solve hard Sudoku puzzles in a small timeframe, the implementation had to be optimized. In this capacity, the choice of data structures and algorithms used was** <------ **TODODDOOD**
 
 Multi-dimensional `numpy` arrays were chosen as the main data structure to store information in the solution. By using a universal data type throughout the solution, the computational costs associated with conversions from one data type to another are avoided. `numpy` arrays were chosen over other alternatives, like python's `list` objects, as they provide in-built functions to iterate and manipulate their contents efficiently, like `ndenumarate`, `ndindex` and `full`. Additionally, the library provides a way of importing Sudoku puzzles from external files directly into a `numpy` array without the need of complex, expensive operations, aiding both code clarity and efficiency.
 
@@ -71,7 +74,7 @@ Other data structures like `dictionaries` and `lists` are also used in certain p
 Through time analysis of the solution, via a code profiler, the `deepcopy` of the `copy` library was proven to take up over 78% of the solution's runtime. To overcome the overheads associated with `deepcopy`, the implementation includes the `copy_state` function which is capable of creating a copy of a `SudokuState` object more efficiently. It achieves this by making use of `numpy`'s inbuilt `ndarray.copy` function.
 
 ### Future Work TODO
-An *Inference* function, implementing arc-consistency, could be incorporated in the existing backtracking search. This could potentially improve the overall performance of the solution, since it would be able to detect assignments which lead to failure early on.
+An *Inference* function, implementing arc-consistency, could be incorporated in the existing backtracking search. This could potentially improve the overall performance of the solution, since it would be able to detect assignments which lead to failure early on. **TODO**
 
 Multi-threading was beyond the scope of this project and as such was not included in the current implementation. However, it poses an area for further research. By successfully incorporating multi-threading in the solution, the overall runtime of the application would improve.
 
