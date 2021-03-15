@@ -65,7 +65,7 @@ def pick_next_cell(sudoku_state):
     # Use the minimum-remaining values heuristic:
     min_value_positions = get_min_value_positions(sudoku_state)  # Get the positions (row, col) with the minimum moves
 
-    if len(min_value_positions) == 1:  # If the MRV does not return multiple positions, don't apply degree heuristic
+    if len(min_value_positions) == 1:  # If the MRV returns one position, don't apply degree heuristic
         return min_value_positions[0][0], min_value_positions[0][1]  # Return the coordinates of the position
 
     # Use the degree heuristic:
@@ -76,43 +76,6 @@ def pick_next_cell(sudoku_state):
             max_degree = curr_degree  # If the current degree is higher than the max, update the max
             max_row, max_col = position  # Update the coordinates of the max
     return max_row, max_col  # Return the coordinates of the position with the highest degree
-
-
-def order_values(sudoku_state, row, col):
-    # LEAST CONSTRAINING VALUE heuristic TODO, test and compares times.
-    # RETURN SORTED LIST FROM 0 TO HIGHEST
-    counters, ordered_values = [], []
-    for value in sudoku_state.possible_values[row][col]:
-        counter = 0
-        for i in range(9):
-            if value in sudoku_state.possible_values[row][i]:  # Search the column
-                counter += 1
-            if value in sudoku_state.possible_values[i][col]:  # Search the row
-                counter += 1
-
-        # Find start of 3x3 block:
-        block_row = row - (row % 3)
-        block_col = col - (col % 3)
-
-        # Check each element in the 3x3 block:
-        for temp_row in range(3):
-            for temp_col in range(3):
-                if value in sudoku_state.possible_values[temp_row + block_row][temp_col + block_col]:
-                    counter += 1
-        counters.append(counter)
-        ordered_values.append(value)
-
-    for i in range(1, len(counters)):
-        key_1 = counters[i]
-        key_2 = ordered_values[i]
-        j = i - 1
-        while j >= 0 and key_1 < counters[j]:
-            counters[j + 1] = counters[j]
-            ordered_values[j + 1] = ordered_values[j]
-            j -= 1
-        counters[j + 1] = key_1
-        ordered_values[j + 1] = key_2
-    return ordered_values
 
 
 def depth_first_search(sudoku_state):
@@ -127,7 +90,6 @@ def depth_first_search(sudoku_state):
     """
     row, col = pick_next_cell(sudoku_state)  # Pick position for next move
     values = sudoku_state.possible_values[row][col]
-    # values = order_values(sudoku_state, row, col) # TODO DECIDE
     for value in values:  # For each possible value
         new_state = sudoku_state.gen_next_state(row, col, value)  # Generate the resulting board
         if new_state.is_goal():
