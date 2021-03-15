@@ -29,14 +29,16 @@ Employ a **back-tracking search**, using a combination of **depth-first search**
 
 
 ### Heuristics TODO
-Two heuristics are used to make an educated 
+Two heuristics are used to make an informed decision regarding which empty position to fill next. These are the **minimum-remaining-values** (MRV) and **degree** heuristics and are used for variable ordering.
 #### Minimum-remaining-values (MRV)  TODO
-Narrows down the most ideal positions to fill in first
+The minimum-remaining-values heuristic, also called the "most constrained variable" heuristic, picks the position (variable) with the fewest possible values. [2] It picks a variable that has the highest likelihood of resulting in failure soon, reducing the number of computations otherwise spent searching other variables first. By extent, if a variable has no possible values left then it would be selected and result in failure straight away.
 
 #### Degree  TODO
+
+
 Good for when we have a lot of possible candidates.
 
-
+#### OLD VERSION (REMOVE)
 Uses the **minimum-remaining-values** (MRV) heuristic, which picks the "most constrained variable" every time it makes a choice. In other words, it chooses the variable that is most likely to result in an invalid state. (Page 216-17)
 
 The algorithm works as follows:
@@ -46,13 +48,12 @@ The algorithm works as follows:
 
 
 
-#### Value Heuristics TODO !!! (PLACEHOLDER, PENDING)
-- ADD LEAST-CONSTRAINED VALUE HERE
+#### Value Heuristics TODO !!! (PLACEHOLDER, PENDING) TO BE REMOVED
+- ADD LEAST-CONSTRAINED VALUE to be removed
 
 
 ## Results TODO
-Minimum-remaining-values heuristic was found to have the greatest impact<br>
-Degree heuristic improved overall runtime
+Prior to including heuristics in the solution, the solver would use static variable ordering which does not typically result in an efficient search. [2] By including variable ordering heuristics, the overall runtime of the solution improved drastically. In particular, the greatest change was noticed when the minimum-remaining-values heuristic was added to the solution. However, by pairing MRV with the degree heuristic, the runtime was significantly improved once more, resulting in 8.4 - 9.3 second runtimes for all puzzles.
 
 
 ## Discussion
