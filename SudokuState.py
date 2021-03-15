@@ -155,8 +155,12 @@ class SudokuState:
 
         singleton_list = new_state.get_singletons()  # Find singletons for the new board configuration
         while singleton_list:
-            row, col = singleton_list[0]
-            new_state = new_state.gen_next_state(row, col, new_state.possible_values[row][col][0])  # Generate new state
+            row, col = singleton_list.pop()  # Get singleton's position
+
+            new_state.final_values[row][col] = new_state.possible_values[row][col][0]  # Update final value
+            new_state.possible_values[row][col] = []  # Position has been filled so it no longer has possible moves
+            new_state.update_constraints(row, col, new_state.final_values[row][col])  # Propagate constraints
+
             singleton_list = new_state.get_singletons()  # Get the remaining singletons
 
         return new_state  # Return the resulting state
