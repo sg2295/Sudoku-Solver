@@ -79,7 +79,7 @@ def depth_first_search(sudoku_state):
     Makes use of the minimum-remaining-value (MRV) and degree heuristics to find a solution to the given board, if
     a solution exists. After selecting a position to fill, it creates a new SudokuState object for each possible value
     of the current position. It then recursively calls itself until it finds the solution, or an invalid state,
-    backtracking if needed. Uses forward checking to identify dead-ends without going "deep".
+    backtracking if needed. Identifies dead-ends without going "deep", by checking if they are solvable.
     :param sudoku_state: Sudoku board configuration to be evaluated (SudokuState object).
     :return: The SudokuState representing the solved board, or None (indicating it is not solvable).
     """
