@@ -67,6 +67,8 @@ def pick_next_cell(sudoku_state):
     """
     # Use the minimum-remaining values heuristic:
     min_value_positions = get_min_value_positions(sudoku_state)  # Get the positions (row, col) with the minimum moves
+    if len(min_value_positions) == 1:  # If the MRV does not return multiple positions TODO DECIDE WHAT TO DO WITH IT
+        return min_value_positions[0][0], min_value_positions[0][1]  # Return the coordinates of the position TODO
     # Use the degree heuristic:
     max_row, max_col, max_degree = -1, -1, 0  # Assume the highest degree is 0 at first
     for position in min_value_positions:  # Loop through all of the minimum-remaining-values positions
